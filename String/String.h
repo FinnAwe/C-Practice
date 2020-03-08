@@ -62,7 +62,7 @@ private:
     char* cap;
     char* first_free;
     char* elements;
-    std::allocator<char> m_allocator;
+    static std::allocator<char> m_allocator;//public for all String object, means move action counld be easy
 };
 
 #endif

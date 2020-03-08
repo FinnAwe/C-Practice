@@ -6,6 +6,8 @@
 
 using namespace std;
 
+std::allocator<char> String::m_allocator;
+
 //define a conversion from c-string to String
 //converting constructor
 String::String(const char* ctr):elements(nullptr), first_free(nullptr), cap(nullptr){
@@ -34,32 +36,22 @@ String& String::operator=(const String &s){
     return *this;
 }
 
+/** all move action just take over control, easy buy efficient with static member allocator*/
 //move constructor
-String::String(String &&s)noexcept{
-    auto data = m_allocator.allocate(s.Size());
-    auto old_head = s.begin();
-    auto new_first_free = data; 
-    while(old_head != s.end()){
-        m_allocator.construct(new_first_free++, std::move(*old_head++));
-    }
-
-    elements = data;
-    first_free = new_first_free;
-    cap = data + s.Size();
+String::String(String &&s) noexcept : elements(s.elements), first_free(s.first_free), cap(s.cap){
+    s.elements = s.first_free = s.cap = nullptr;//make sure moved-from object is decontructable
 }
 
 //move assignment
-String& String::operator=(String &&s)noexcept{
-    auto data = m_allocator.allocate(s.Size());
-    auto old_head = s.begin();
-    auto new_first_free = data; 
-    while(old_head != s.end()){
-        m_allocator.construct(new_first_free++, std::move(*old_head++));
+String& String::operator=(String &&s) noexcept{
+    if(&s != this)
+    {
+        Free();
+        elements = s.elements;
+        first_free = s.first_free;
+        cap = s.cap;
+        s.elements = s.first_free = s.cap = nullptr;//make sure moved-from object is decontructable
     }
-    Free();
-    elements = data;
-    first_free = new_first_free;
-    cap = data + s.Size();
     return *this;
 }
 

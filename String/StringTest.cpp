@@ -58,10 +58,15 @@ public:
 
 TEST_F(StringTestFixture, TestAssignment){
     //move assignment
-    s1 = "what";
-    s2 = "the";
-    s3 = "heck";
-    s4 = "";
+    String rhs1 = "what";
+    String rhs2 = "the";
+    String rhs3 = "heck";
+    String rhs4 = "";
+
+    s1 = std::move(rhs1);
+    s2 = std::move(rhs2);
+    s3 = std::move(rhs3);
+    s4 = std::move(rhs4);
     ASSERT_TRUE(s1 == "what");
     ASSERT_TRUE(s2 == "the");
     ASSERT_TRUE(s3 == "heck");
@@ -89,11 +94,25 @@ TEST_F(StringTestFixture, TestCopyControl){
     svec.push_back(s3);
     svec.push_back(s4);
 
+    String rhs1 = s1;
+    String rhs2 = s2;
+    String rhs3 = s3;
+    String rhs4 = s4;
+    svec.push_back(std::move(rhs1));
+    svec.push_back(std::move(rhs2));
+    svec.push_back(std::move(rhs3));
+    svec.push_back(std::move(rhs4));
+
     ASSERT_TRUE(svec[0] == "what");
     ASSERT_TRUE(svec[1] == "the");
     ASSERT_TRUE(svec[2] == "heck");
     ASSERT_TRUE(svec[3].Size() == 0);
     ASSERT_TRUE(svec[3] == "");
+    ASSERT_TRUE(svec[4] == "what");
+    ASSERT_TRUE(svec[5] == "the");
+    ASSERT_TRUE(svec[6] == "heck");
+    ASSERT_TRUE(svec[7].Size() == 0);
+    ASSERT_TRUE(svec[7] == "");
 }
 
 TEST_F(StringTestFixture, TestPushBack){
